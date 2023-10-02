@@ -1,5 +1,8 @@
 using Serilog.Events;
 using Serilog;
+using Mango.Services.AuthAPI.DB;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
@@ -18,6 +21,13 @@ try
     .ReadFrom.Configuration(context.Configuration)
     .ReadFrom.Services(services)
     .WriteTo.Console());
+
+    // Add Db Connection
+    builder.Services.AddDbContext<AppDbContext>(option =>
+    {
+        option.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+    });
+    builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
     builder.Services.AddControllers();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -38,11 +48,24 @@ try
 
     app.UseHttpsRedirection();
 
+    app.UseAuthentication();
+
     app.UseAuthorization();
 
     app.MapControllers();
+    ApplyMigration();
 
     app.Run();
+
+    void ApplyMigration()
+    {
+        using var scope = app.Services.CreateScope();
+        var _db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        if (_db.Database.GetPendingMigrations().Any())
+        {
+            _db.Database.Migrate();
+        }
+    }
 }
 catch (Exception ex)
 {

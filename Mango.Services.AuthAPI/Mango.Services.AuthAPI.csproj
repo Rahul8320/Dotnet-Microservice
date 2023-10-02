@@ -1,16 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <InvariantGlobalization>true</InvariantGlobalization>
+    <InvariantGlobalization>false</InvariantGlobalization>
   </PropertyGroup>
 
   <ItemGroup>
 	  <PackageReference Include="AutoMapper" Version="12.0.1" />
 	  <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
 	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0-rc.1.23421.29" />
+	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0-rc.1.23421.29" />
 	  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0-rc.1.23421.29" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0-rc.1.23419.6" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0-rc.1.23419.6">
@@ -23,13 +24,13 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-rc.1.23419.4" />
-	  <PackageReference Include="Serilog" Version="3.0.2-dev-02056" />
+	  <PackageReference Include="Serilog" Version="3.1.0-dev-02064" />
 	  <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
 	  <PackageReference Include="Serilog.Formatting.Compact" Version="1.1.1-dev-00944" />
 	  <PackageReference Include="Serilog.Sinks.Console" Version="4.2.0-dev-00918" />
 	  <PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00968" />
 	  <PackageReference Include="ServiceStack.Interfaces" Version="6.10.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
 </Project>
