@@ -61,7 +61,7 @@ namespace Mango.Services.CouponAPI.Service
             {
                 var response = await _unitOfWork.CouponRepository.GetAll();
                 if (response == null) { return Enumerable.Empty<CouponDto>(); }
-                return _mapper.Map<IEnumerable<CouponDto>>(response);
+                return _mapper.Map<IEnumerable<CouponDto>>(response.OrderBy(s => s.CouponCode));
             }
             catch (Exception)
             {
