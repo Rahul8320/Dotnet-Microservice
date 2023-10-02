@@ -62,5 +62,19 @@ namespace Mango.Web.Controllers
 			}
 			return NotFound();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CouponDelete(CouponDto model)
+        {
+            
+            ResponseDto? response = await _couponService.DeleteCouponAsync(model.CouponId);
+
+            if (response != null && response.IsSuccess)
+            {
+                return RedirectToAction(nameof(CouponIndex));
+            }
+            
+            return View(model);
+        }
     }
 }
