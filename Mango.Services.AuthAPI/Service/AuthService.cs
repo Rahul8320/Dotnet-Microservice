@@ -9,19 +9,59 @@ namespace Mango.Services.AuthAPI.Service
     public class AuthService : IAuthService
     {
         private readonly AppDbContext _context;
+        private readonly IJwtTokenGenerator _jwtTokenGenerator;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public AuthService(AppDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AuthService(
+            AppDbContext context, 
+            IJwtTokenGenerator jwtTokenGenerator,
+            UserManager<ApplicationUser> userManager, 
+            RoleManager<IdentityRole> roleManager
+        )
         {
             _context = context;
+            _jwtTokenGenerator = jwtTokenGenerator;
             _roleManager = roleManager;
             _userManager = userManager;
         }
 
-        public Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
+        public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var user = _context.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDto.UserName.ToLower());
+
+                bool isValid = await _userManager.CheckPasswordAsync(user, loginRequestDto.Password);
+
+                if(user == null || isValid == false)
+                {
+                    return new LoginResponseDto() { User=null, Token=""};
+                }
+
+                // if user was found, generate the jwt token
+
+                var token = _jwtTokenGenerator.GenerateJwtToken(user);
+
+                UserDto userDto = new() { 
+                    Email = user.Email ?? "",
+                    ID = user.Id,
+                    Name = user.Name,
+                    PhoneNumber = user.PhoneNumber ?? ""
+                };
+
+                LoginResponseDto loginResponseDto = new LoginResponseDto()
+                {
+                    User = userDto,
+                    Token = token
+                };
+
+                return loginResponseDto;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<string> Register(RegistrationRequestDto registrationRequestDto)
