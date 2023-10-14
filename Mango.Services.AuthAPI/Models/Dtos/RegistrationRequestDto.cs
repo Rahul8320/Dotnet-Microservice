@@ -15,5 +15,7 @@ namespace Mango.Services.AuthAPI.Models.Dtos
 
         [Required]
         public string Password { get; set; } = String.Empty;
+
+        public string? Role {get; set;}
     }
 }

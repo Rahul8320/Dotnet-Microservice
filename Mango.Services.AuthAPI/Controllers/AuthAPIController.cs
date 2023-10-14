@@ -31,6 +31,8 @@ namespace Mango.Services.AuthAPI.Controllers
                         _response.Message = errorMessage;
                         return BadRequest(_response);
                     }
+
+                    _response.Result = "Registration Successfull";
                     return Ok(_response);
                 }
                 _response.IsSuccess = false;
@@ -61,6 +63,37 @@ namespace Mango.Services.AuthAPI.Controllers
                     }
 
                     _response.Result = loginResponse;
+                    return Ok(_response);
+                }
+                _response.IsSuccess = false;
+                _response.Message = "Validation Failed";
+                return BadRequest(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.Message = ex.Message;
+                return BadRequest(_response);
+            }
+        }
+
+        [HttpPost("assign-role")]
+        public async Task<IActionResult> AssignRole(RegistrationRequestDto model)
+        {
+            try
+            {
+                if(ModelState.IsValid && model.Role?.Trim() != null)
+                {
+                    var assignRoleSuccessful = await _authService.AssignRole(model.Email, model.Role.ToUpper());
+                    
+                    if(!assignRoleSuccessful)
+                    {
+                        _response.IsSuccess = false;
+                        _response.Message = "Error encountered!";
+                        return BadRequest(_response);
+                    }
+
+                    _response.Result = assignRoleSuccessful;
                     return Ok(_response);
                 }
                 _response.IsSuccess = false;
