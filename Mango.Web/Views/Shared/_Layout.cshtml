@@ -40,7 +40,7 @@
                     @* Add Login and Register route *@
                     <ul class="navbar-nav">
 
-                        @if(!User.Identity.IsAuthenticated)
+                        @if(User?.Identity?.IsAuthenticated is false)
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Auth" asp-action="Login">Login</a>

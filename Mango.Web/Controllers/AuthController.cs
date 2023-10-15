@@ -1,5 +1,9 @@
-﻿using Mango.Web.Models;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Mango.Web.Models;
 using Mango.Web.Service.Interface;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
@@ -9,10 +13,12 @@ namespace Mango.Web.Controllers;
 public class AuthController : Controller
 {
     private readonly IAuthService _authService;
+    private readonly ITokenProvider _tokenProvider;
 
-    public AuthController(IAuthService authService)
+    public AuthController(IAuthService authService, ITokenProvider tokenProvider)
     {
         _authService = authService;
+        _tokenProvider = tokenProvider;
     }
 
     [HttpGet]
@@ -31,6 +37,11 @@ public class AuthController : Controller
         {
            var result = JsonConvert.DeserializeObject<LoginResponseDto>(Convert.ToString(response.Result)!);
 
+            if(result is not null && result.Token != null)
+            {
+                await SignInUser(result);
+                _tokenProvider.SetToken(result.Token);
+            }
            return RedirectToAction("Index", "Home");
         }
         else
@@ -89,6 +100,32 @@ public class AuthController : Controller
     [HttpGet]
     public IActionResult Logout()
     {
-        return View();
+        HttpContext.SignOutAsync();
+        _tokenProvider.ClearToken();
+        return RedirectToAction("Index", "Home");
+    }
+
+    [HttpGet]
+    public IActionResult AccessDenied()
+    {
+        TempData["error"] = "You don't have any access to view this page!";
+       return RedirectToAction("Index", "Home");
+    }
+
+    private async Task SignInUser(LoginResponseDto model)
+    {
+        var handler = new JwtSecurityTokenHandler();
+
+        var jwt = handler.ReadJwtToken(model.Token);
+
+        var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
+        identity.AddClaim(new Claim(JwtRegisteredClaimNames.Email, jwt.Claims.FirstOrDefault(u => u.Type == JwtRegisteredClaimNames.Email)!.Value));
+        identity.AddClaim(new Claim(JwtRegisteredClaimNames.Sub, jwt.Claims.FirstOrDefault(u => u.Type == JwtRegisteredClaimNames.Sub)!.Value));
+        identity.AddClaim(new Claim(JwtRegisteredClaimNames.FamilyName, jwt.Claims.FirstOrDefault(u => u.Type == JwtRegisteredClaimNames.FamilyName)!.Value));
+
+        identity.AddClaim(new Claim(ClaimTypes.Name, jwt.Claims.FirstOrDefault(u => u.Type == JwtRegisteredClaimNames.FamilyName)!.Value));
+
+        var principle = new ClaimsPrincipal(identity);
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principle);
     }
 }
