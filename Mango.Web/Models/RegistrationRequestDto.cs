@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Mango.Web.Common;
 
 namespace Mango.Web.Models;
 
@@ -20,5 +21,5 @@ public class RegistrationRequestDto
     [MaxLength(16, ErrorMessage = "Your password must not be more than 16 character.")]
     public string Password { get; set; } = string.Empty;
 
-    public string? Role { get; set; }
+    public RoleTypes? Role { get; set; }
 }

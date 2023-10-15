@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Mango.Web.Common;
 using Mango.Web.Models;
 using Mango.Web.Service.Interface;
 using Microsoft.AspNetCore.Authentication;
@@ -57,8 +58,8 @@ public class AuthController : Controller
     {
         var roleList = new List<SelectListItem>()
         {
-            new SelectListItem{ Text = "Admin", Value="Admin"},
-            new SelectListItem{Text = "Customer", Value = "Customer"}
+            new SelectListItem{ Text = RoleTypes.Admin.ToString(), Value=RoleTypes.Admin.ToString() },
+            new SelectListItem{ Text = RoleTypes.Customer.ToString(), Value=RoleTypes.Customer.ToString() }
         };
         ViewBag.RoleList = roleList;
 
@@ -73,9 +74,9 @@ public class AuthController : Controller
 
         if(result != null && result.IsSuccess)
         {
-            if(string.IsNullOrEmpty(request.Role))
+            if(string.IsNullOrEmpty(request.Role.ToString()))
             {
-                request.Role = "Customer";
+                request.Role = RoleTypes.Customer;
             }
             
             response = await _authService.AssignRoleAsync(request);
@@ -89,8 +90,8 @@ public class AuthController : Controller
         TempData["error"] = result?.Message ?? "Something gone wrong!";
         var roleList = new List<SelectListItem>()
         {
-            new SelectListItem{ Text = "Admin", Value="Admin"},
-            new SelectListItem{Text = "Customer", Value = "Customer"}
+            new SelectListItem{ Text = RoleTypes.Admin.ToString(), Value=RoleTypes.Admin.ToString() },
+            new SelectListItem{ Text = RoleTypes.Customer.ToString(), Value=RoleTypes.Customer.ToString() }
         };
         ViewBag.RoleList = roleList;
 
@@ -124,6 +125,7 @@ public class AuthController : Controller
         identity.AddClaim(new Claim(JwtRegisteredClaimNames.FamilyName, jwt.Claims.FirstOrDefault(u => u.Type == JwtRegisteredClaimNames.FamilyName)!.Value));
 
         identity.AddClaim(new Claim(ClaimTypes.Name, jwt.Claims.FirstOrDefault(u => u.Type == JwtRegisteredClaimNames.FamilyName)!.Value));
+        identity.AddClaim(new Claim(ClaimTypes.Role, jwt.Claims.FirstOrDefault(u => u.Type == "role")!.Value));
 
         var principle = new ClaimsPrincipal(identity);
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principle);
