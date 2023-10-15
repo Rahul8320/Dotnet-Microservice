@@ -7,17 +7,17 @@ namespace Mango.Services.ProductAPI.Controllers;
 
 [Route("api/product")]
 [ApiController]
-[Authorize]
+//[Authorize]
 public class ProductController : ControllerBase
 {
     private readonly IProductService _productService;
     private readonly ResponseDto _response;
     private readonly ILogger<ProductController> _logger;
 
-    public ProductController(IProductService productService, ResponseDto response, ILogger<ProductController> logger)
+    public ProductController(IProductService productService, ILogger<ProductController> logger)
     {
         _productService = productService;
-        _response = response;
+        _response = new ResponseDto();
         _logger = logger;
     }
 
@@ -74,7 +74,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "ADMIN")]
+    //[Authorize(Roles = "ADMIN")]
     public async Task<ResponseDto> Post(AddProductDto product)
     {
         try
@@ -101,7 +101,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpPut]
-    [Authorize(Roles = "ADMIN")]
+    //[Authorize(Roles = "ADMIN")]
     public async Task<ResponseDto> Put(ProductDto product)
     {
         try
@@ -128,7 +128,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpDelete]
-    [Authorize(Roles = "ADMIN")]
+    //[Authorize(Roles = "ADMIN")]
     public async Task<ResponseDto> Delete(Guid id)
     {
         try
