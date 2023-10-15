@@ -1,10 +1,13 @@
+using System.Text;
 using Mango.Services.CouponAPI.AutoMapper;
 using Mango.Services.CouponAPI.DB;
 using Mango.Services.CouponAPI.Repository;
 using Mango.Services.CouponAPI.Repository.Interface;
 using Mango.Services.CouponAPI.Service;
 using Mango.Services.CouponAPI.Service.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Events;
 
@@ -38,6 +41,29 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
+    // configuration authentication
+    var secret = builder.Configuration.GetValue<string>("ApiSettings:Secret");
+    var issuer = builder.Configuration.GetValue<string>("ApiSettings:Issuer");
+    var audience = builder.Configuration.GetValue<string>("ApiSettings:Audience");
+
+    var key = Encoding.ASCII.GetBytes(secret!);
+
+    builder.Services.AddAuthentication(x => {
+        x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    }).AddJwtBearer(x => {
+        x.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateIssuer = true,
+            ValidIssuer = issuer,
+            ValidAudience = audience,
+            ValidateAudience = true
+        };
+    });
+    builder.Services.AddAuthorization();
+
     // Adding Mapping Profile
     builder.Services.AddAutoMapper(typeof(MappingProfile));
 
@@ -61,7 +87,7 @@ try
     app.UseSerilogRequestLogging();
 
     app.UseHttpsRedirection();
-
+    app.UseAuthentication();
     app.UseAuthorization();
 
     app.MapControllers();
@@ -74,6 +100,7 @@ try
     {
         using var scope = app.Services.CreateScope();
         var _db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
         if (_db.Database.GetPendingMigrations().Any())
         {
             _db.Database.Migrate();

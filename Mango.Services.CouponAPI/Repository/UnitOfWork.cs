@@ -1,6 +1,5 @@
 ﻿using Mango.Services.CouponAPI.DB;
 using Mango.Services.CouponAPI.Repository.Interface;
-using SQLitePCL;
 
 namespace Mango.Services.CouponAPI.Repository
 {
@@ -8,12 +7,21 @@ namespace Mango.Services.CouponAPI.Repository
     {
         private readonly AppDbContext _context;
 
-        public UnitOfWork(AppDbContext context) => _context = context;
+        public UnitOfWork(AppDbContext context)
+        {
+            _context = context;
+        }
 
         #region repositories
 
-        private ICouponRepository _couponRepository;
-        public ICouponRepository CouponRepository  => _couponRepository ?? new CouponRepository(_context);
+        private ICouponRepository _couponRepository = default!;
+        public ICouponRepository CouponRepository
+        {
+            get
+            {
+                return _couponRepository ?? new CouponRepository(_context);
+            }
+        }
 
         #endregion repositories
 

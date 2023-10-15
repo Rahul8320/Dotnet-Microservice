@@ -1,5 +1,6 @@
 ﻿using Mango.Services.CouponAPI.Models.Dtos;
 using Mango.Services.CouponAPI.Service.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
@@ -7,6 +8,7 @@ namespace Mango.Services.CouponAPI.Controllers
 {
     [Route("api/coupon")]
     [ApiController]
+    [Authorize]
     public class CouponAPIController : ControllerBase
     {
         private readonly ICouponService _couponService;
