@@ -40,7 +40,7 @@ public class AuthService : IAuthService
             ApiType = ApiType.POST,
             Data = loginRequestDto,
             Url = _appSettings.AuthAPIUrl + "/api/auth/login"
-        });
+        }, withBearer: false);
     }
 
     public async Task<ResponseDto?> RegisterAsync(RegistrationRequestDto registrationRequestDto)
@@ -50,6 +50,6 @@ public class AuthService : IAuthService
             ApiType = ApiType.POST,
             Data = registrationRequestDto,
             Url = _appSettings.AuthAPIUrl + "/api/auth/register"
-        });
+        }, withBearer: false);
     }
 }
