@@ -1,8 +1,7 @@
-﻿namespace Mango.Services.CouponAPI.Repository.Interface
+﻿namespace Mango.Services.CouponAPI.Repository.Interface;
+
+public interface IUnitOfWork : IDisposable
 {
-    public interface IUnitOfWork : IDisposable
-    {
-        ICouponRepository CouponRepository { get; }
-        Task<bool> Complete();
-    }
+    ICouponRepository CouponRepository { get; }
+    Task<bool> Complete();
 }

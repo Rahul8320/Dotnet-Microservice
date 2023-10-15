@@ -1,7 +1,7 @@
-﻿using Mango.Services.CouponAPI.DB;
-using Mango.Services.CouponAPI.Repository.Interface;
+﻿using Mango.Services.ProductAPI.DB;
+using Mango.Services.ProductAPI.Repository.Interfaces;
 
-namespace Mango.Services.CouponAPI.Repository;
+namespace Mango.Services.ProductAPI.Repository;
 
 public class UnitOfWork : IUnitOfWork
 {
@@ -14,12 +14,13 @@ public class UnitOfWork : IUnitOfWork
 
     #region repositories
 
-    private ICouponRepository _couponRepository = default!;
-    public ICouponRepository CouponRepository
+    private IProductRepository _productRepository = default!;
+
+    public IProductRepository ProductRepository
     {
         get
         {
-            return _couponRepository ?? new CouponRepository(_context);
+            return _productRepository ?? new ProductRepository(_context);
         }
     }
 

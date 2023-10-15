@@ -2,15 +2,14 @@
 using Mango.Services.CouponAPI.Models;
 using Mango.Services.CouponAPI.Repository.Interface;
 
-namespace Mango.Services.CouponAPI.Repository
-{
-    internal class CouponRepository : Repository<Coupon>, ICouponRepository
-    {
-        private readonly AppDbContext _context;
+namespace Mango.Services.CouponAPI.Repository;
 
-        public CouponRepository(AppDbContext context) : base(context)
-        {
-            _context = context;
-        }
+internal class CouponRepository : Repository<Coupon>, ICouponRepository
+{
+    private readonly AppDbContext _context;
+
+    public CouponRepository(AppDbContext context) : base(context)
+    {
+        _context = context;
     }
 }
