@@ -43,12 +43,12 @@ public class AuthController : Controller
                 await SignInUser(result);
                 _tokenProvider.SetToken(result.Token);
             }
+
            return RedirectToAction("Index", "Home");
         }
         else
         {
             TempData["error"] = response?.Message ?? "Something gone wrong!";
-            ModelState.AddModelError("CustomError", response?.Message ?? "Something gone wrong!");
             return View(request);
         }
     }
@@ -61,6 +61,7 @@ public class AuthController : Controller
             new SelectListItem{ Text = RoleTypes.Admin.ToString(), Value=RoleTypes.Admin.ToString() },
             new SelectListItem{ Text = RoleTypes.Customer.ToString(), Value=RoleTypes.Customer.ToString() }
         };
+
         ViewBag.RoleList = roleList;
 
         return View();
@@ -87,12 +88,17 @@ public class AuthController : Controller
                 return RedirectToAction(nameof(Login));
             }
         }
-        TempData["error"] = result?.Message ?? "Something gone wrong!";
+        else
+        {
+            TempData["error"] = result?.Message ?? "Something gone wrong!";
+        }
+
         var roleList = new List<SelectListItem>()
         {
             new SelectListItem{ Text = RoleTypes.Admin.ToString(), Value=RoleTypes.Admin.ToString() },
             new SelectListItem{ Text = RoleTypes.Customer.ToString(), Value=RoleTypes.Customer.ToString() }
         };
+
         ViewBag.RoleList = roleList;
 
         return View(request);
