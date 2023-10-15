@@ -14,4 +14,9 @@ public class AppSettings
     /// Gets or Sets auth api base url.
     /// </summary>
     public string AuthAPIUrl { get; set; } = String.Empty;
+
+    /// <summary>
+    /// Gets or Sets token in cookies.
+    /// </summary>
+    public string TokenCookie { get; set; } = string.Empty;
 }
